@@ -1,0 +1,92 @@
+[
+    {
+        "id": "A1B2C3D4-E5F6-7890-ABCD-EF1234567890",
+        "name": "Sarah Chen",
+        "title": "VP of Engineering",
+        "company": "TechForward Inc.",
+        "linkedinURL": "https://www.linkedin.com/in/sarahchen",
+        "email": "sarah.chen@techforward.com",
+        "phone": "+1-555-0101"
+    },
+    {
+        "id": "B2C3D4E5-F678-9012-BCDE-F12345678901",
+        "name": "James Rodriguez",
+        "title": "Chief Marketing Officer",
+        "company": "GrowthLabs",
+        "linkedinURL": "https://www.linkedin.com/in/jamesrodriguez",
+        "email": "james@growthlabs.io",
+        "phone": "+1-555-0102"
+    },
+    {
+        "id": "C3D4E5F6-7890-1234-CDEF-123456789012",
+        "name": "Priya Patel",
+        "title": "Senior Product Manager",
+        "company": "InnovateCo",
+        "linkedinURL": "https://www.linkedin.com/in/priyapatel",
+        "email": "priya.patel@innovateco.com",
+        "phone": "+1-555-0103"
+    },
+    {
+        "id": "D4E5F678-9012-3456-DEF0-1234567890AB",
+        "name": "Michael Thompson",
+        "title": "Director of Sales",
+        "company": "CloudScale Solutions",
+        "linkedinURL": "https://www.linkedin.com/in/michaelthompson",
+        "email": "m.thompson@cloudscale.com",
+        "phone": "+1-555-0104"
+    },
+    {
+        "id": "E5F67890-1234-5678-EF01-234567890ABC",
+        "name": "Emily Nakamura",
+        "title": "Head of Design",
+        "company": "PixelCraft Studios",
+        "linkedinURL": "https://www.linkedin.com/in/emilynakamura",
+        "email": "emily@pixelcraft.co",
+        "phone": "+1-555-0105"
+    },
+    {
+        "id": "F6789012-3456-7890-F012-34567890ABCD",
+        "name": "David Kim",
+        "title": "CTO",
+        "company": "NeuralPath AI",
+        "linkedinURL": "https://www.linkedin.com/in/davidkim-ai",
+        "email": "david.kim@neuralpath.ai",
+        "phone": "+1-555-0106"
+    },
+    {
+        "id": "07890123-4567-8901-0123-4567890ABCDE",
+        "name": "Lisa Okafor",
+        "title": "Managing Partner",
+        "company": "Vertex Capital",
+        "linkedinURL": "https://www.linkedin.com/in/lisaokafor",
+        "email": "lisa@vertexcapital.com",
+        "phone": "+1-555-0107"
+    },
+    {
+        "id": "18901234-5678-9012-1234-567890ABCDEF",
+        "name": "Robert Martinez",
+        "title": "Principal Software Architect",
+        "company": "DataStream Corp",
+        "linkedinURL": "https://www.linkedin.com/in/robertmartinez",
+        "email": "robert.m@datastream.com",
+        "phone": "+1-555-0108"
+    },
+    {
+        "id": "29012345-6789-0123-2345-67890ABCDEF0",
+        "name": "Aisha Hassan",
+        "title": "VP of Operations",
+        "company": "LogiNext Global",
+        "linkedinURL": "https://www.linkedin.com/in/aishahassan",
+        "email": "aisha.hassan@loginext.com",
+        "phone": "+1-555-0109"
+    },
+    {
+        "id": "30123456-7890-1234-3456-7890ABCDEF01",
+        "name": "Chris Anderson",
+        "title": "Founder & CEO",
+        "company": "GreenTech Ventures",
+        "linkedinURL": "https://www.linkedin.com/in/chrisanderson-gt",
+        "email": "chris@greentechventures.com",
+        "phone": "+1-555-0110"
+    }
+]

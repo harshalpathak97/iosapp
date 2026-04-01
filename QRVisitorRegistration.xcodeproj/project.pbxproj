@@ -1,0 +1,358 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000001 /* QRVisitorRegistrationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000001; };
+		A10000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000002; };
+		A10000003 /* Attendee.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000003; };
+		A10000004 /* AttendeeDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000004; };
+		A10000005 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000005; };
+		A10000006 /* QRScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000006; };
+		A10000007 /* AttendeeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000007; };
+		A10000008 /* RegistrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000008; };
+		A10000009 /* EnvoyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000009; };
+		A10000010 /* BadgePrintService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010; };
+		A10000011 /* attendees.json in Resources */ = {isa = PBXBuildFile; fileRef = A20000011; };
+		A10000012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000012; };
+		A10000013 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000013; };
+		A10000014 /* BadgePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014; };
+		A10000015 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015; };
+		A10000016 /* RegistrationLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000001 /* QRVisitorRegistrationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRVisitorRegistrationApp.swift; sourceTree = "<group>"; };
+		A20000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20000003 /* Attendee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attendee.swift; sourceTree = "<group>"; };
+		A20000004 /* AttendeeDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendeeDatabase.swift; sourceTree = "<group>"; };
+		A20000005 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
+		A20000006 /* QRScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewController.swift; sourceTree = "<group>"; };
+		A20000007 /* AttendeeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendeeDetailView.swift; sourceTree = "<group>"; };
+		A20000008 /* RegistrationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewModel.swift; sourceTree = "<group>"; };
+		A20000009 /* EnvoyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvoyService.swift; sourceTree = "<group>"; };
+		A20000010 /* BadgePrintService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgePrintService.swift; sourceTree = "<group>"; };
+		A20000011 /* attendees.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = attendees.json; sourceTree = "<group>"; };
+		A20000012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20000013 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		A20000014 /* BadgePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgePreviewView.swift; sourceTree = "<group>"; };
+		A20000015 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A20000016 /* RegistrationLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationLogView.swift; sourceTree = "<group>"; };
+		A30000001 /* QRVisitorRegistration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QRVisitorRegistration.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A30000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A40000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A50000001 = {
+			isa = PBXGroup;
+			children = (
+				A50000002 /* QRVisitorRegistration */,
+				A50000007 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A50000002 /* QRVisitorRegistration */ = {
+			isa = PBXGroup;
+			children = (
+				A20000001 /* QRVisitorRegistrationApp.swift */,
+				A20000002 /* ContentView.swift */,
+				A50000003 /* Models */,
+				A50000004 /* Views */,
+				A50000005 /* ViewModels */,
+				A50000006 /* Services */,
+				A50000008 /* Resources */,
+				A30000002 /* Info.plist */,
+				A20000012 /* Assets.xcassets */,
+			);
+			path = QRVisitorRegistration;
+			sourceTree = "<group>";
+		};
+		A50000003 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000003 /* Attendee.swift */,
+				A20000004 /* AttendeeDatabase.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A50000004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A20000005 /* QRScannerView.swift */,
+				A20000006 /* QRScannerViewController.swift */,
+				A20000007 /* AttendeeDetailView.swift */,
+				A20000013 /* DashboardView.swift */,
+				A20000014 /* BadgePreviewView.swift */,
+				A20000015 /* SettingsView.swift */,
+				A20000016 /* RegistrationLogView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A50000005 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A20000008 /* RegistrationViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A50000006 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A20000009 /* EnvoyService.swift */,
+				A20000010 /* BadgePrintService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A50000007 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A30000001 /* QRVisitorRegistration.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A50000008 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A20000011 /* attendees.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A60000001 /* QRVisitorRegistration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000003;
+			buildPhases = (
+				A70000001 /* Sources */,
+				A40000001 /* Frameworks */,
+				A70000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QRVisitorRegistration;
+			productName = QRVisitorRegistration;
+			productReference = A30000001;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A90000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A60000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A80000001;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A50000001;
+			productRefGroup = A50000007;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A60000001,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A70000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000011 /* attendees.json in Resources */,
+				A10000012 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A70000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000001 /* QRVisitorRegistrationApp.swift in Sources */,
+				A10000002 /* ContentView.swift in Sources */,
+				A10000003 /* Attendee.swift in Sources */,
+				A10000004 /* AttendeeDatabase.swift in Sources */,
+				A10000005 /* QRScannerView.swift in Sources */,
+				A10000006 /* QRScannerViewController.swift in Sources */,
+				A10000007 /* AttendeeDetailView.swift in Sources */,
+				A10000008 /* RegistrationViewModel.swift in Sources */,
+				A10000009 /* EnvoyService.swift in Sources */,
+				A10000010 /* BadgePrintService.swift in Sources */,
+				A10000013 /* DashboardView.swift in Sources */,
+				A10000014 /* BadgePreviewView.swift in Sources */,
+				A10000015 /* SettingsView.swift in Sources */,
+				A10000016 /* RegistrationLogView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A80000001 /* Build configuration list for PBXProject */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A80000004,
+				A80000005,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80000003 /* Build configuration list for PBXNativeTarget */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A80000006,
+				A80000007,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80000004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A80000005 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A80000006 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = QRVisitorRegistration/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "QR Visitor";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to scan QR codes for visitor registration.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qrvisitor.registration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		A80000007 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = QRVisitorRegistration/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "QR Visitor";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to scan QR codes for visitor registration.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qrvisitor.registration;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+	};
+	rootObject = A90000001;
+}
