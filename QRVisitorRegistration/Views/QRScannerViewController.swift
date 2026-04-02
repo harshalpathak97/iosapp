@@ -21,8 +21,47 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-        setupCamera()
+        checkCameraPermissionAndSetup()
         setupOverlay()
+    }
+
+    private func checkCameraPermissionAndSetup() {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            setupCamera()
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                DispatchQueue.main.async {
+                    if granted {
+                        self?.setupCamera()
+                        self?.startScanning()
+                    } else {
+                        self?.showPermissionDeniedAlert()
+                    }
+                }
+            }
+        case .denied, .restricted:
+            showPermissionDeniedAlert()
+        @unknown default:
+            showPermissionDeniedAlert()
+        }
+    }
+
+    private func showPermissionDeniedAlert() {
+        let label = UILabel()
+        label.text = "Camera access is required.\nGo to Settings > Privacy > Camera\nto enable access for this app."
+        label.textColor = .white
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            label.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 40),
+            label.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -40),
+        ])
     }
 
     override func viewDidLayoutSubviews() {

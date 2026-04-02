@@ -1,9 +1,11 @@
 import Foundation
+import UIKit
 
 /// Integration service for the Envoy Visitor Registration system.
 ///
 /// Envoy provides a REST API for managing visitor sign-ins. This service handles
-/// creating visitor entries and triggering the sign-in flow.
+/// creating invite entries so visitors appear on the Envoy kiosk's "Expected Visitors" list.
+/// The kiosk then handles the actual sign-in and badge printing.
 ///
 /// Setup:
 /// 1. Obtain an API key from your Envoy dashboard (Settings > Integrations > API)
@@ -35,10 +37,12 @@ class EnvoyService: ObservableObject {
         configure(apiKey: savedKey, locationID: savedLocation)
     }
 
-    // MARK: - Visitor Sign-In
+    // MARK: - Create Invite (Pre-Register Visitor)
 
-    /// Sign in a visitor through the Envoy API
-    func signInVisitor(attendee: Attendee) async throws -> EnvoySignInResult {
+    /// Create an invite through the Envoy API so the visitor appears on the kiosk.
+    /// The Envoy kiosk app will then show the visitor in its "Expected Visitors" list.
+    /// The visitor taps their name on the kiosk to complete sign-in and print a badge.
+    func createInvite(for attendee: Attendee) async throws -> EnvoySignInResult {
         guard isConfigured else {
             throw EnvoyError.notConfigured
         }
@@ -47,14 +51,19 @@ class EnvoyService: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Accept")
 
+        // Envoy Invites API uses JSON:API format
+        // See: https://developers.envoy.com/hub/reference/createinvite
         let payload: [String: Any] = [
             "data": [
                 "type": "invites",
                 "attributes": [
+                    "full-name": attendee.name,
+                    "email": attendee.email ?? "",
                     "expected-arrival-at": ISO8601DateFormatter().string(from: Date()),
-                    "private-notes": "Registered via QR Scanner App"
+                    "private-notes": "\(attendee.title) at \(attendee.company) - Registered via QR Scanner"
                 ],
                 "relationships": [
                     "location": [
@@ -64,12 +73,6 @@ class EnvoyService: ObservableObject {
                         ]
                     ]
                 ]
-            ],
-            "meta": [
-                "visitor-name": attendee.name,
-                "visitor-email": attendee.email ?? "",
-                "visitor-company": attendee.company,
-                "visitor-title": attendee.title
             ]
         ]
 
@@ -83,7 +86,10 @@ class EnvoyService: ObservableObject {
 
         switch httpResponse.statusCode {
         case 200...299:
-            return EnvoySignInResult(success: true, message: "Visitor signed in successfully")
+            return EnvoySignInResult(
+                success: true,
+                message: "\(attendee.name) added to Envoy kiosk. They can tap their name to sign in."
+            )
         case 401:
             throw EnvoyError.unauthorized
         case 422:
@@ -93,29 +99,6 @@ class EnvoyService: ObservableObject {
             let errorBody = String(data: data, encoding: .utf8) ?? "Unknown error"
             throw EnvoyError.apiError(httpResponse.statusCode, errorBody)
         }
-    }
-
-    /// Alternative: Open the Envoy Visitor app via URL scheme with pre-filled data
-    /// This is useful when direct API access is not available
-    func openEnvoyApp(for attendee: Attendee) -> Bool {
-        // Envoy Visitors iPad app supports URL schemes for sign-in
-        var components = URLComponents()
-        components.scheme = "envoy"
-        components.host = "sign-in"
-        components.queryItems = [
-            URLQueryItem(name: "name", value: attendee.name),
-            URLQueryItem(name: "email", value: attendee.email ?? ""),
-            URLQueryItem(name: "company", value: attendee.company),
-            URLQueryItem(name: "title", value: attendee.title),
-        ]
-
-        guard let url = components.url else { return false }
-
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            return true
-        }
-        return false
     }
 }
 
@@ -146,5 +129,3 @@ enum EnvoyError: LocalizedError {
         }
     }
 }
-
-import UIKit

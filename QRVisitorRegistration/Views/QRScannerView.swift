@@ -6,6 +6,7 @@ struct QRScannerView: UIViewControllerRepresentable {
 
     class Coordinator: NSObject, QRScannerDelegate {
         var parent: QRScannerView
+        var wasScanning: Bool = true
 
         init(_ parent: QRScannerView) {
             self.parent = parent
@@ -32,11 +33,13 @@ struct QRScannerView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: QRScannerViewController, context: Context) {
-        if isScanning {
+        let wasScanning = context.coordinator.wasScanning
+        if isScanning && !wasScanning {
             uiViewController.resetScanner()
             uiViewController.startScanning()
-        } else {
+        } else if !isScanning && wasScanning {
             uiViewController.stopScanning()
         }
+        context.coordinator.wasScanning = isScanning
     }
 }

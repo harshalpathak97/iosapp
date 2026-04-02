@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ContentView: View {
     @StateObject private var viewModel = RegistrationViewModel()
@@ -12,34 +13,32 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Top bar
-                topBar
+        VStack(spacing: 0) {
+            // Top bar
+            topBar
 
-                Divider()
+            Divider()
 
-                // Main content based on tab
-                Group {
-                    switch selectedTab {
-                    case .scanner:
-                        scannerContent
-                    case .attendees:
-                        DashboardView(viewModel: viewModel)
-                    case .log:
-                        RegistrationLogView(records: viewModel.registrationLog)
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                // Status bar
-                if !viewModel.statusMessage.isEmpty {
-                    statusBar
+            // Main content based on tab
+            Group {
+                switch selectedTab {
+                case .scanner:
+                    scannerContent
+                case .attendees:
+                    DashboardView(viewModel: viewModel)
+                case .log:
+                    RegistrationLogView(records: viewModel.registrationLog)
                 }
             }
-            .sheet(isPresented: $showSettings) {
-                SettingsView(envoyService: viewModel.envoyService)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            // Status bar
+            if !viewModel.statusMessage.isEmpty {
+                statusBar
             }
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView(envoyService: viewModel.envoyService)
         }
     }
 
@@ -286,5 +285,3 @@ struct ContentView: View {
         }
     }
 }
-
-import UIKit

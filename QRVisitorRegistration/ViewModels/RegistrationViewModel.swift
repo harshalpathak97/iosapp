@@ -92,23 +92,18 @@ class RegistrationViewModel: ObservableObject {
 
         var envoySuccess = false
 
-        // Try Envoy API sign-in
+        // Create an invite via Envoy API so the visitor appears on the kiosk
         if envoyService.isConfigured {
             do {
-                let result = try await envoyService.signInVisitor(attendee: attendee)
+                let result = try await envoyService.createInvite(for: attendee)
                 envoySuccess = result.success
                 statusMessage = result.message
             } catch {
-                statusMessage = "Envoy sign-in failed: \(error.localizedDescription). Continuing with badge print."
+                statusMessage = "Envoy invite failed: \(error.localizedDescription). You can still print a badge."
                 envoySuccess = false
             }
         } else {
-            // Try opening Envoy app via URL scheme
-            let opened = envoyService.openEnvoyApp(for: attendee)
-            envoySuccess = opened
-            if !opened {
-                statusMessage = "Envoy not configured. Proceeding with badge print only."
-            }
+            statusMessage = "Envoy not configured. Go to Settings to add your API key. Badge printing still available."
         }
 
         let record = RegistrationRecord(
@@ -128,16 +123,9 @@ class RegistrationViewModel: ObservableObject {
         printService.printBadge(for: attendee, from: viewController) { [weak self] success, message in
             DispatchQueue.main.async {
                 self?.statusMessage = message
-                // Update the most recent log record
+                // Update the existing log record in-place (preserving id and registeredAt)
                 if let index = self?.registrationLog.firstIndex(where: { $0.attendee.id == attendee.id }) {
-                    let old = self?.registrationLog[index]
-                    if let old = old {
-                        self?.registrationLog[index] = RegistrationRecord(
-                            attendee: old.attendee,
-                            envoySignInSuccess: old.envoySignInSuccess,
-                            badgePrinted: success
-                        )
-                    }
+                    self?.registrationLog[index].badgePrinted = success
                 }
             }
         }

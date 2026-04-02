@@ -34,8 +34,8 @@ struct RegistrationRecord: Identifiable {
     let id: UUID
     let attendee: Attendee
     let registeredAt: Date
-    let envoySignInSuccess: Bool
-    let badgePrinted: Bool
+    var envoySignInSuccess: Bool
+    var badgePrinted: Bool
 
     init(attendee: Attendee, envoySignInSuccess: Bool = false, badgePrinted: Bool = false) {
         self.id = UUID()
