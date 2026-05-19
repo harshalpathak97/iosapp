@@ -9,157 +9,174 @@ struct AttendeeDetailView: View {
     let isCompleted: Bool
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                Button(action: onCancel) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
-                        Text("Scan Again")
-                    }
-                    .font(.body)
-                    .foregroundColor(.blue)
-                }
+        ScrollView {
+            VStack(spacing: DS.Spacing.l) {
+                header
+                profileCard
+                metaCard
+                actionButtons
+            }
+            .padding(DS.Spacing.l)
+            .frame(maxWidth: 560)
+            .frame(maxWidth: .infinity)
+        }
+        .background(DS.Color.background)
+    }
 
-                Spacer()
+    // MARK: - Header
 
-                Text("Visitor Details")
-                    .font(.title2.bold())
-
-                Spacer()
-
-                // Balance spacer
-                HStack(spacing: 6) {
+    private var header: some View {
+        HStack {
+            Button(action: onCancel) {
+                HStack(spacing: DS.Spacing.xxs) {
                     Image(systemName: "chevron.left")
                     Text("Scan Again")
                 }
-                .font(.body)
-                .opacity(0)
+                .font(.body.weight(.medium))
+                .foregroundColor(DS.Color.primary)
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 16)
-            .background(Color(.systemBackground))
 
-            Divider()
+            Spacer()
 
-            // Main content
-            ScrollView {
-                VStack(spacing: 32) {
-                    // Profile card
-                    VStack(spacing: 20) {
-                        // Avatar circle with initials
-                        ZStack {
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [Color.blue, Color.blue.opacity(0.7)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                                .frame(width: 120, height: 120)
-
-                            Text(initials(for: attendee.name))
-                                .font(.system(size: 44, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.top, 8)
-
-                        // Name
-                        Text(attendee.name)
-                            .font(.system(size: 34, weight: .bold))
-                            .multilineTextAlignment(.center)
-
-                        // Title & Company
-                        VStack(spacing: 6) {
-                            Text(attendee.title)
-                                .font(.title3)
-                                .foregroundColor(.secondary)
-
-                            Text(attendee.company)
-                                .font(.title3.weight(.medium))
-                                .foregroundColor(.primary)
-                        }
-
-                        // LinkedIn link
-                        HStack(spacing: 8) {
-                            Image(systemName: "link")
-                                .foregroundColor(.blue)
-                            Text(attendee.linkedinURL)
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                                .lineLimit(1)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.blue.opacity(0.08))
-                        .cornerRadius(8)
-                    }
-                    .padding(32)
-                    .frame(maxWidth: 500)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(20)
-
-                    // Action buttons
-                    if isCompleted {
-                        VStack(spacing: 16) {
-                            Label("Registration Complete", systemImage: "checkmark.circle.fill")
-                                .font(.title2.bold())
-                                .foregroundColor(.green)
-
-                            Button(action: onPrintBadge) {
-                                Label("Print Badge", systemImage: "printer.fill")
-                                    .font(.title3.weight(.semibold))
-                                    .frame(maxWidth: 360, minHeight: 56)
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.orange)
-
-                            Button(action: onCancel) {
-                                Text("Scan Next Visitor")
-                                    .font(.title3.weight(.medium))
-                                    .frame(maxWidth: 360, minHeight: 56)
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.blue)
-                        }
-                    } else {
-                        VStack(spacing: 16) {
-                            Button(action: onRegister) {
-                                if isLoading {
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                        .frame(maxWidth: 360, minHeight: 56)
-                                } else {
-                                    Label("Register & Sign In", systemImage: "person.badge.plus")
-                                        .font(.title3.weight(.semibold))
-                                        .frame(maxWidth: 360, minHeight: 56)
-                                }
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.green)
-                            .disabled(isLoading)
-
-                            Button(action: onPrintBadge) {
-                                Label("Print Badge Only", systemImage: "printer.fill")
-                                    .font(.title3.weight(.medium))
-                                    .frame(maxWidth: 360, minHeight: 56)
-                            }
-                            .buttonStyle(.bordered)
-                            .disabled(isLoading)
-                        }
-                    }
-                }
-                .padding(40)
-                .frame(maxWidth: .infinity)
+            if isCompleted {
+                StatusPill(kind: .success, text: "Registered")
+            } else {
+                StatusPill(kind: .info, text: "Ready to Register")
             }
         }
     }
 
-    private func initials(for name: String) -> String {
-        let parts = name.split(separator: " ")
-        let first = parts.first?.prefix(1) ?? ""
-        let last = parts.count > 1 ? parts.last!.prefix(1) : ""
-        return "\(first)\(last)".uppercased()
+    // MARK: - Profile Card
+
+    private var profileCard: some View {
+        VStack(spacing: DS.Spacing.m) {
+            InitialsAvatar(name: attendee.name, size: 120)
+
+            VStack(spacing: DS.Spacing.xxs) {
+                Text(attendee.name)
+                    .font(.system(size: 32, weight: .bold))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(DS.Color.textPrimary)
+
+                if !attendee.title.isEmpty {
+                    Text(attendee.title)
+                        .font(.title3.weight(.medium))
+                        .foregroundColor(DS.Color.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+
+                if !attendee.company.isEmpty {
+                    HStack(spacing: DS.Spacing.xs) {
+                        Image(systemName: "building.2.fill")
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundColor(DS.Color.primary)
+                        Text(attendee.company)
+                            .font(.title3.weight(.semibold))
+                            .foregroundColor(DS.Color.textPrimary)
+                    }
+                    .padding(.top, DS.Spacing.xs)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .card(padding: DS.Spacing.xl)
+    }
+
+    // MARK: - Meta Card (contact + LinkedIn)
+
+    private var metaCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            metaRow(
+                icon: "link",
+                label: "LinkedIn",
+                value: attendee.linkedinURL,
+                tint: DS.Color.primary,
+                monospaced: true
+            )
+
+            if let email = attendee.email, !email.isEmpty {
+                Divider().opacity(0.4)
+                metaRow(
+                    icon: "envelope.fill",
+                    label: "Email",
+                    value: email,
+                    tint: DS.Color.accent
+                )
+            }
+
+            if let phone = attendee.phone, !phone.isEmpty {
+                Divider().opacity(0.4)
+                metaRow(
+                    icon: "phone.fill",
+                    label: "Phone",
+                    value: phone,
+                    tint: DS.Color.success
+                )
+            }
+        }
+        .card(padding: DS.Spacing.s)
+    }
+
+    private func metaRow(icon: String, label: String, value: String, tint: Color, monospaced: Bool = false) -> some View {
+        HStack(spacing: DS.Spacing.m) {
+            Image(systemName: icon)
+                .symbolRenderingMode(.hierarchical)
+                .foregroundColor(tint)
+                .frame(width: 36, height: 36)
+                .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: DS.Radius.s))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label.uppercased())
+                    .font(.caption2.weight(.semibold))
+                    .foregroundColor(DS.Color.textTertiary)
+                Text(value)
+                    .font(monospaced ? .caption.monospaced() : .body.weight(.medium))
+                    .foregroundColor(DS.Color.textPrimary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, DS.Spacing.s)
+        .padding(.vertical, DS.Spacing.s)
+    }
+
+    // MARK: - Action Buttons
+
+    @ViewBuilder
+    private var actionButtons: some View {
+        if isCompleted {
+            VStack(spacing: DS.Spacing.s) {
+                Button(action: onPrintBadge) {
+                    Label("Print Badge", systemImage: "printer.fill")
+                }
+                .buttonStyle(PrimaryActionButtonStyle(tint: DS.Color.accent))
+
+                Button(action: onCancel) {
+                    Label("Scan Next Visitor", systemImage: "qrcode.viewfinder")
+                }
+                .buttonStyle(SecondaryActionButtonStyle())
+            }
+        } else {
+            VStack(spacing: DS.Spacing.s) {
+                Button(action: onRegister) {
+                    if isLoading {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Label("Register Visitor", systemImage: "person.badge.plus")
+                    }
+                }
+                .buttonStyle(PrimaryActionButtonStyle())
+                .disabled(isLoading)
+
+                Button(action: onPrintBadge) {
+                    Label("Print Badge Only", systemImage: "printer")
+                }
+                .buttonStyle(SecondaryActionButtonStyle())
+                .disabled(isLoading)
+            }
+        }
     }
 }

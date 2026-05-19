@@ -6,73 +6,119 @@ struct DashboardView: View {
 
     var body: some View {
         NavigationSplitView {
-            // Sidebar: Attendee list
-            VStack(spacing: 0) {
-                // Search bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.secondary)
-                    TextField("Search attendees...", text: $searchText)
-                        .textFieldStyle(.plain)
+            sidebar
+        } detail: {
+            detailContent
+        }
+    }
+
+    // MARK: - Sidebar
+
+    private var sidebar: some View {
+        VStack(spacing: 0) {
+            searchBar
+            Divider().opacity(0.3)
+            attendeeList
+        }
+        .background(DS.Color.background)
+        .navigationTitle("Attendees")
+        .navigationBarTitleDisplayMode(.large)
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: DS.Spacing.s) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(DS.Color.textTertiary)
+            TextField("Search by name, company, or title", text: $searchText)
+                .textFieldStyle(.plain)
+                .autocapitalization(.none)
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(DS.Color.textTertiary)
                 }
-                .padding(12)
-                .background(Color(.tertiarySystemBackground))
-                .cornerRadius(10)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+            }
+        }
+        .padding(DS.Spacing.s)
+        .background(DS.Color.surface, in: RoundedRectangle(cornerRadius: DS.Radius.m))
+        .padding(.horizontal, DS.Spacing.m)
+        .padding(.vertical, DS.Spacing.s)
+    }
 
-                Divider()
-
-                // Attendee list
-                let filtered = viewModel.database.searchAttendees(query: searchText)
-                List(filtered) { attendee in
-                    Button {
-                        viewModel.matchedAttendee = attendee
-                        viewModel.currentState = .attendeeFound(attendee)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(attendee.name)
-                                .font(.headline)
-                            Text(attendee.title)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            Text(attendee.company)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+    private var attendeeList: some View {
+        let filtered = viewModel.database.searchAttendees(query: searchText)
+        return Group {
+            if filtered.isEmpty {
+                EmptyStateView(
+                    icon: "magnifyingglass",
+                    title: "No Matches",
+                    subtitle: searchText.isEmpty
+                        ? "The attendee database is empty."
+                        : "No attendees match \"\(searchText)\"."
+                )
+            } else {
+                List {
+                    ForEach(filtered) { attendee in
+                        Button {
+                            viewModel.matchedAttendee = attendee
+                            viewModel.currentState = .attendeeFound(attendee)
+                        } label: {
+                            attendeeRow(attendee)
                         }
-                        .padding(.vertical, 4)
+                        .listRowBackground(DS.Color.background)
+                        .listRowSeparatorTint(DS.Color.divider.opacity(0.5))
                     }
                 }
                 .listStyle(.plain)
             }
-            .navigationTitle("Attendees (\(viewModel.database.attendees.count))")
+        }
+    }
 
-        } detail: {
-            // Detail: current state
-            switch viewModel.currentState {
-            case .scanning:
-                VStack(spacing: 16) {
-                    Image(systemName: "person.crop.rectangle.stack")
-                        .font(.system(size: 60))
-                        .foregroundColor(.secondary)
-                    Text("Select an attendee or scan a QR code")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                }
-            case .attendeeFound(let attendee):
-                attendeeDetailContent(attendee: attendee, isCompleted: false)
-            case .completed(let attendee):
-                attendeeDetailContent(attendee: attendee, isCompleted: true)
-            default:
-                VStack(spacing: 16) {
-                    Image(systemName: "person.crop.rectangle.stack")
-                        .font(.system(size: 60))
-                        .foregroundColor(.secondary)
-                    Text("Select an attendee")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                }
+    private func attendeeRow(_ attendee: Attendee) -> some View {
+        HStack(spacing: DS.Spacing.s) {
+            InitialsAvatar(name: attendee.name, size: 44)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(attendee.name)
+                    .font(.headline)
+                    .foregroundColor(DS.Color.textPrimary)
+                Text(attendee.title)
+                    .font(.subheadline)
+                    .foregroundColor(DS.Color.textSecondary)
+                    .lineLimit(1)
+                Text(attendee.company)
+                    .font(.caption)
+                    .foregroundColor(DS.Color.textTertiary)
+                    .lineLimit(1)
             }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(DS.Color.textTertiary)
+        }
+        .padding(.vertical, DS.Spacing.xxs)
+    }
+
+    // MARK: - Detail
+
+    @ViewBuilder
+    private var detailContent: some View {
+        switch viewModel.currentState {
+        case .attendeeFound(let attendee):
+            attendeeDetailContent(attendee: attendee, isCompleted: false)
+        case .completed(let attendee):
+            attendeeDetailContent(attendee: attendee, isCompleted: true)
+        default:
+            EmptyStateView(
+                icon: "person.crop.rectangle.stack",
+                title: "Select an Attendee",
+                subtitle: "Pick someone from the list to see their details, or scan a QR code from the Scanner tab."
+            )
+            .padding(DS.Spacing.l)
         }
     }
 
@@ -81,20 +127,15 @@ struct DashboardView: View {
         AttendeeDetailView(
             attendee: attendee,
             onRegister: {
-                Task {
-                    await viewModel.registerAttendee(attendee)
-                }
+                Task { await viewModel.registerAttendee(attendee) }
             },
             onPrintBadge: {
-                // Print will be triggered from the hosting view controller
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootVC = windowScene.windows.first?.rootViewController {
+                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let rootVC = scene.windows.first?.rootViewController {
                     viewModel.printBadge(for: attendee, from: rootVC)
                 }
             },
-            onCancel: {
-                viewModel.resetToScanning()
-            },
+            onCancel: { viewModel.resetToScanning() },
             isLoading: viewModel.isLoading,
             isCompleted: isCompleted
         )

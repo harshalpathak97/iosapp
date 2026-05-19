@@ -1,64 +1,73 @@
 import SwiftUI
 
+/// Visual preview of the printed badge. Mirrors the layout drawn by
+/// `BadgePrintService.renderBadgeImage` so users can see what will print.
 struct BadgePreviewView: View {
     let attendee: Attendee
-    let accentColor: Color
-
-    init(attendee: Attendee, accentColor: Color = Color(red: 0.1, green: 0.3, blue: 0.7)) {
-        self.attendee = attendee
-        self.accentColor = accentColor
-    }
+    var accentColor: Color = DS.Color.primary
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: DS.Spacing.s) {
             Text("Badge Preview")
-                .font(.headline)
-                .padding(.bottom, 12)
+                .font(.caption.weight(.semibold))
+                .foregroundColor(DS.Color.textTertiary)
+                .tracking(1.2)
 
-            // Badge card
             VStack(spacing: 0) {
-                // Header bar
                 Rectangle()
                     .fill(accentColor)
-                    .frame(height: 40)
+                    .frame(height: 44)
                     .overlay(
-                        Text("VISITOR")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
+                        HStack(spacing: DS.Spacing.xs) {
+                            Image(systemName: "person.fill")
+                                .font(.caption.weight(.bold))
+                            Text("VISITOR")
+                                .font(.system(size: 15, weight: .bold))
+                                .tracking(2)
+                        }
+                        .foregroundColor(.white)
                     )
 
-                // Badge content
-                VStack(spacing: 8) {
+                VStack(spacing: DS.Spacing.xs) {
                     Text(attendee.name)
-                        .font(.system(size: 28, weight: .bold))
+                        .font(.system(size: 26, weight: .bold))
                         .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.7)
 
-                    Text(attendee.title)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.secondary)
+                    if !attendee.title.isEmpty {
+                        Text(attendee.title)
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                    }
 
-                    Text(attendee.company)
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
+                    if !attendee.company.isEmpty {
+                        Text(attendee.company)
+                            .font(.system(size: 13))
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
+                    }
                 }
-                .padding(.vertical, 24)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, DS.Spacing.m)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, DS.Spacing.l)
 
-                // Bottom accent
                 Rectangle()
                     .fill(accentColor)
                     .frame(height: 4)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 8)
+                    .padding(.horizontal, DS.Spacing.m)
+                    .padding(.bottom, DS.Spacing.s)
             }
             .frame(width: 288, height: 216)
             .background(Color.white)
-            .cornerRadius(8)
+            .clipShape(RoundedRectangle(cornerRadius: DS.Radius.s))
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                RoundedRectangle(cornerRadius: DS.Radius.s)
+                    .stroke(DS.Color.divider.opacity(0.4), lineWidth: 1)
             )
-            .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+            .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 4)
         }
     }
 }

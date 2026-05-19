@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Client for the LinkedIn scraper backend (see /backend in this repo).
 ///
@@ -16,13 +17,13 @@ class LinkedInScraperService: ObservableObject {
         self.sharedSecret = sharedSecret.trimmingCharacters(in: .whitespacesAndNewlines)
         self.isConfigured = !self.backendURL.isEmpty && !self.sharedSecret.isEmpty
 
-        UserDefaults.standard.set(self.backendURL, forKey: "scraper_backend_url")
-        UserDefaults.standard.set(self.sharedSecret, forKey: "scraper_shared_secret")
+        UserDefaults.standard.set(self.backendURL, forKey: DS.Keys.scraperBackendURL)
+        UserDefaults.standard.set(self.sharedSecret, forKey: DS.Keys.scraperSharedSecret)
     }
 
     func loadSavedConfiguration() {
-        let url = UserDefaults.standard.string(forKey: "scraper_backend_url") ?? ""
-        let secret = UserDefaults.standard.string(forKey: "scraper_shared_secret") ?? ""
+        let url = UserDefaults.standard.string(forKey: DS.Keys.scraperBackendURL) ?? ""
+        let secret = UserDefaults.standard.string(forKey: DS.Keys.scraperSharedSecret) ?? ""
         configure(backendURL: url, sharedSecret: secret)
     }
 

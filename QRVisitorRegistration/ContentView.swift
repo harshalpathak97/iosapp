@@ -10,33 +10,44 @@ struct ContentView: View {
         case scanner = "Scanner"
         case attendees = "Attendees"
         case log = "Log"
+
+        var icon: String {
+            switch self {
+            case .scanner: return "qrcode.viewfinder"
+            case .attendees: return "person.2.fill"
+            case .log: return "list.bullet.clipboard.fill"
+            }
+        }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            // Top bar
             topBar
-
             Divider()
+                .opacity(0.3)
 
-            // Main content based on tab
             Group {
                 switch selectedTab {
                 case .scanner:
                     scannerContent
+                        .transition(.opacity)
                 case .attendees:
                     DashboardView(viewModel: viewModel)
+                        .transition(.opacity)
                 case .log:
                     RegistrationLogView(records: viewModel.registrationLog)
+                        .transition(.opacity)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .animation(DS.Animation.smooth, value: selectedTab)
 
-            // Status bar
             if !viewModel.statusMessage.isEmpty {
                 statusBar
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .animation(DS.Animation.smooth, value: viewModel.statusMessage)
         .sheet(isPresented: $showSettings) {
             SettingsView(
                 envoyService: viewModel.envoyService,
@@ -48,46 +59,69 @@ struct ContentView: View {
     // MARK: - Top Bar
 
     private var topBar: some View {
-        HStack(spacing: 20) {
-            // App title
-            HStack(spacing: 10) {
+        HStack(spacing: DS.Spacing.l) {
+            HStack(spacing: DS.Spacing.s) {
                 Image(systemName: "qrcode.viewfinder")
                     .font(.title2)
-                    .foregroundColor(.blue)
-                Text("QR Visitor Registration")
-                    .font(.title2.bold())
+                    .foregroundStyle(DS.Gradient.primary)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Visitor Registration")
+                        .font(.title3.bold())
+                        .foregroundColor(DS.Color.textPrimary)
+                    Text("LinkedIn QR Scanner")
+                        .font(.caption)
+                        .foregroundColor(DS.Color.textSecondary)
+                }
             }
 
             Spacer()
 
-            // Tab picker
             Picker("View", selection: $selectedTab) {
                 ForEach(Tab.allCases, id: \.self) { tab in
-                    Label(tab.rawValue, systemImage: tabIcon(for: tab))
+                    Label(tab.rawValue, systemImage: tab.icon)
                         .tag(tab)
                 }
             }
             .pickerStyle(.segmented)
-            .frame(width: 360)
+            .frame(width: 400)
 
             Spacer()
 
-            // Settings button
-            Button {
-                showSettings = true
-            } label: {
-                Image(systemName: "gear")
-                    .font(.title3)
-            }
+            HStack(spacing: DS.Spacing.s) {
+                serviceStatusDot(
+                    isOn: viewModel.envoyService.isConfigured,
+                    label: "Envoy"
+                )
+                serviceStatusDot(
+                    isOn: viewModel.scraperService.isConfigured,
+                    label: "Scraper"
+                )
 
-            // Envoy status indicator
-            Circle()
-                .fill(viewModel.envoyService.isConfigured ? Color.green : Color.orange)
-                .frame(width: 10, height: 10)
+                Button {
+                    showSettings = true
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                        .font(.title3)
+                        .foregroundColor(DS.Color.textSecondary)
+                        .padding(DS.Spacing.xs)
+                        .background(Circle().fill(DS.Color.surface))
+                }
+            }
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 12)
-        .background(Color(.systemBackground))
+        .padding(.horizontal, DS.Spacing.l)
+        .padding(.vertical, DS.Spacing.s)
+        .background(DS.Color.background)
+    }
+
+    private func serviceStatusDot(isOn: Bool, label: String) -> some View {
+        HStack(spacing: DS.Spacing.xxs) {
+            Circle()
+                .fill(isOn ? DS.Color.success : DS.Color.textTertiary.opacity(0.5))
+                .frame(width: 8, height: 8)
+            Text(label)
+                .font(.caption2.weight(.medium))
+                .foregroundColor(DS.Color.textSecondary)
+        }
     }
 
     // MARK: - Scanner Content
@@ -97,28 +131,24 @@ struct ContentView: View {
             let isWide = geometry.size.width > 700
 
             if isWide {
-                // iPad landscape: side-by-side layout
                 HStack(spacing: 0) {
-                    // Left: QR Scanner
                     scannerPanel
                         .frame(width: geometry.size.width * 0.5)
 
-                    Divider()
+                    Divider().opacity(0.3)
 
-                    // Right: Result panel
                     resultPanel
                         .frame(width: geometry.size.width * 0.5)
+                        .background(DS.Color.background)
                 }
             } else {
-                // Portrait or compact: stacked
                 ZStack {
                     scannerPanel
-
                     if case .scanning = viewModel.currentState {
-                        // Show scanner full screen
+                        EmptyView()
                     } else {
                         resultPanel
-                            .background(Color(.systemBackground))
+                            .background(DS.Color.background)
                     }
                 }
             }
@@ -139,39 +169,38 @@ struct ContentView: View {
                 isScanning: $viewModel.isScanning
             )
 
-            // Overlay when not scanning
             if !viewModel.isScanning {
-                Color.black.opacity(0.4)
+                Color.black.opacity(0.55)
                     .overlay(
-                        VStack(spacing: 12) {
+                        VStack(spacing: DS.Spacing.m) {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 48))
-                                .foregroundColor(.green)
-                            Text("QR Code Scanned")
-                                .font(.title3.bold())
+                                .font(.system(size: 64))
+                                .foregroundStyle(DS.Color.success, .white)
+                                .symbolRenderingMode(.palette)
+                            Text("QR Code Captured")
+                                .font(.title2.bold())
                                 .foregroundColor(.white)
                         }
                     )
+                    .transition(.opacity)
             }
         }
+        .animation(DS.Animation.smooth, value: viewModel.isScanning)
     }
 
     @ViewBuilder
     private var resultPanel: some View {
         switch viewModel.currentState {
         case .scanning:
-            VStack(spacing: 16) {
-                Image(systemName: "qrcode.viewfinder")
-                    .font(.system(size: 60))
-                    .foregroundColor(.secondary)
-                Text("Scan a LinkedIn QR code to begin")
-                    .font(.title3)
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            EmptyStateView(
+                icon: "qrcode.viewfinder",
+                title: "Ready to Scan",
+                subtitle: "Point the camera at a LinkedIn QR code to look up the attendee."
+            )
+            .padding(DS.Spacing.l)
 
         case .attendeeFound(let attendee), .completed(let attendee):
-            let isCompleted = {
+            let isCompleted: Bool = {
                 if case .completed = viewModel.currentState { return true }
                 return false
             }()
@@ -179,132 +208,148 @@ struct ContentView: View {
             AttendeeDetailView(
                 attendee: attendee,
                 onRegister: {
-                    Task {
-                        await viewModel.registerAttendee(attendee)
-                    }
+                    Task { await viewModel.registerAttendee(attendee) }
                 },
                 onPrintBadge: {
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let rootVC = windowScene.windows.first?.rootViewController {
+                    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let rootVC = scene.windows.first?.rootViewController {
                         viewModel.printBadge(for: attendee, from: rootVC)
                     }
                 },
-                onCancel: {
-                    viewModel.resetToScanning()
-                },
+                onCancel: { viewModel.resetToScanning() },
                 isLoading: viewModel.isLoading,
                 isCompleted: isCompleted
             )
+            .transition(.move(edge: .trailing).combined(with: .opacity))
 
         case .scrapingProfile(let url):
-            VStack(spacing: 20) {
-                ProgressView()
-                    .scaleEffect(1.5)
-                Text("Looking up LinkedIn profile...")
-                    .font(.title3)
-                    .foregroundColor(.secondary)
+            VStack(spacing: DS.Spacing.l) {
+                ZStack {
+                    Circle()
+                        .stroke(DS.Color.primary.opacity(0.15), lineWidth: 6)
+                        .frame(width: 96, height: 96)
+                    ProgressView()
+                        .scaleEffect(1.8)
+                        .tint(DS.Color.primary)
+                }
+
+                VStack(spacing: DS.Spacing.xs) {
+                    Text("Fetching LinkedIn Profile")
+                        .font(.title2.bold())
+                    Text("Scraping the profile via your backend")
+                        .font(.body)
+                        .foregroundColor(DS.Color.textSecondary)
+                }
+
                 Text(url)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color.blue.opacity(0.08))
-                    .cornerRadius(8)
-                Text("This can take 10-30 seconds")
-                    .font(.caption)
-                    .foregroundColor(.tertiary)
+                    .font(.caption.monospaced())
+                    .foregroundColor(DS.Color.textSecondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .padding(.horizontal, DS.Spacing.m)
+                    .padding(.vertical, DS.Spacing.xs)
+                    .background(DS.Color.surface, in: Capsule())
+
+                StatusPill(kind: .info, text: "This can take 10-30 seconds")
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(DS.Spacing.l)
+            .transition(.opacity)
 
         case .notFound(let url):
-            VStack(spacing: 20) {
+            VStack(spacing: DS.Spacing.l) {
                 Image(systemName: "person.fill.questionmark")
-                    .font(.system(size: 60))
-                    .foregroundColor(.orange)
+                    .font(.system(size: 72))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundColor(DS.Color.warning)
 
-                Text("Attendee Not Found")
-                    .font(.title.bold())
-
-                Text("No attendee matches the LinkedIn profile:")
-                    .font(.body)
-                    .foregroundColor(.secondary)
+                VStack(spacing: DS.Spacing.xs) {
+                    Text("Attendee Not Found")
+                        .font(.title.bold())
+                    Text("No record matches this LinkedIn profile.")
+                        .font(.body)
+                        .foregroundColor(DS.Color.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
 
                 Text(url)
-                    .font(.caption)
-                    .foregroundColor(.blue)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color.blue.opacity(0.08))
-                    .cornerRadius(8)
+                    .font(.caption.monospaced())
+                    .foregroundColor(DS.Color.primary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .padding(.horizontal, DS.Spacing.m)
+                    .padding(.vertical, DS.Spacing.xs)
+                    .background(DS.Color.primary.opacity(0.08), in: Capsule())
 
                 Button {
                     viewModel.resetToScanning()
                 } label: {
                     Label("Scan Again", systemImage: "qrcode.viewfinder")
-                        .font(.title3.weight(.semibold))
-                        .frame(maxWidth: 300, minHeight: 50)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(PrimaryActionButtonStyle())
+                .frame(maxWidth: 340)
+                .padding(.top, DS.Spacing.s)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(DS.Spacing.l)
+            .transition(.opacity)
 
         case .registering:
-            VStack(spacing: 20) {
+            VStack(spacing: DS.Spacing.l) {
                 ProgressView()
-                    .scaleEffect(1.5)
+                    .scaleEffect(1.8)
+                    .tint(DS.Color.primary)
                 Text("Registering visitor...")
-                    .font(.title3)
-                    .foregroundColor(.secondary)
+                    .font(.title2.bold())
+                Text("Sending to Envoy")
+                    .font(.body)
+                    .foregroundColor(DS.Color.textSecondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(DS.Spacing.l)
 
         case .error(let message):
-            VStack(spacing: 20) {
+            VStack(spacing: DS.Spacing.l) {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 48))
-                    .foregroundColor(.red)
-                Text("Error")
+                    .font(.system(size: 64))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundColor(DS.Color.danger)
+                Text("Something Went Wrong")
                     .font(.title.bold())
                 Text(message)
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(DS.Color.textSecondary)
                     .multilineTextAlignment(.center)
+                    .padding(.horizontal, DS.Spacing.l)
 
                 Button {
                     viewModel.resetToScanning()
                 } label: {
                     Label("Try Again", systemImage: "arrow.clockwise")
-                        .frame(maxWidth: 300, minHeight: 50)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(PrimaryActionButtonStyle(tint: DS.Color.danger))
+                .frame(maxWidth: 340)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(DS.Spacing.l)
         }
     }
 
     // MARK: - Status Bar
 
     private var statusBar: some View {
-        HStack {
-            Image(systemName: "info.circle")
-                .foregroundColor(.blue)
+        HStack(spacing: DS.Spacing.s) {
+            Image(systemName: "info.circle.fill")
+                .symbolRenderingMode(.hierarchical)
+                .foregroundColor(DS.Color.primary)
             Text(viewModel.statusMessage)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(DS.Color.textSecondary)
+                .lineLimit(2)
             Spacer()
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 8)
-        .background(Color(.secondarySystemBackground))
-    }
-
-    // MARK: - Helpers
-
-    private func tabIcon(for tab: Tab) -> String {
-        switch tab {
-        case .scanner: return "qrcode.viewfinder"
-        case .attendees: return "person.3"
-        case .log: return "list.clipboard"
-        }
+        .padding(.horizontal, DS.Spacing.l)
+        .padding(.vertical, DS.Spacing.s)
+        .background(DS.Color.surface)
     }
 }

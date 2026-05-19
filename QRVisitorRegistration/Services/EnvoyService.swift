@@ -1,5 +1,5 @@
 import Foundation
-import UIKit
+import Combine
 
 /// Integration service for the Envoy Visitor Registration system.
 ///
@@ -27,13 +27,13 @@ class EnvoyService: ObservableObject {
         self.isConfigured = !apiKey.isEmpty && !locationID.isEmpty
 
         // Persist configuration
-        UserDefaults.standard.set(apiKey, forKey: "envoy_api_key")
-        UserDefaults.standard.set(locationID, forKey: "envoy_location_id")
+        UserDefaults.standard.set(apiKey, forKey: DS.Keys.envoyAPIKey)
+        UserDefaults.standard.set(locationID, forKey: DS.Keys.envoyLocationID)
     }
 
     func loadSavedConfiguration() {
-        let savedKey = UserDefaults.standard.string(forKey: "envoy_api_key") ?? ""
-        let savedLocation = UserDefaults.standard.string(forKey: "envoy_location_id") ?? ""
+        let savedKey = UserDefaults.standard.string(forKey: DS.Keys.envoyAPIKey) ?? ""
+        let savedLocation = UserDefaults.standard.string(forKey: DS.Keys.envoyLocationID) ?? ""
         configure(apiKey: savedKey, locationID: savedLocation)
     }
 

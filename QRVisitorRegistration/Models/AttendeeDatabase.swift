@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 class AttendeeDatabase: ObservableObject {
     @Published var attendees: [Attendee] = []

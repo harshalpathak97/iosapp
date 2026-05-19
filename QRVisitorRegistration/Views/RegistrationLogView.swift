@@ -4,77 +4,115 @@ struct RegistrationLogView: View {
     let records: [RegistrationRecord]
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if records.isEmpty {
-                    VStack(spacing: 16) {
-                        Image(systemName: "list.clipboard")
-                            .font(.system(size: 48))
-                            .foregroundColor(.secondary)
-                        Text("No registrations yet")
-                            .font(.title3)
-                            .foregroundColor(.secondary)
-                        Text("Scan a QR code to register a visitor")
-                            .font(.body)
-                            .foregroundColor(.tertiary)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    List(records) { record in
-                        HStack(spacing: 16) {
-                            // Initials circle
-                            ZStack {
-                                Circle()
-                                    .fill(Color.blue.opacity(0.2))
-                                    .frame(width: 44, height: 44)
-                                Text(initials(for: record.attendee.name))
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.blue)
-                            }
+        Group {
+            if records.isEmpty {
+                EmptyStateView(
+                    icon: "list.bullet.clipboard",
+                    title: "No Registrations Yet",
+                    subtitle: "Scan a LinkedIn QR code from the Scanner tab to register your first visitor."
+                )
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: DS.Spacing.s) {
+                        summaryBar
+                            .padding(.horizontal, DS.Spacing.l)
+                            .padding(.top, DS.Spacing.m)
 
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(record.attendee.name)
-                                    .font(.headline)
-                                Text("\(record.attendee.title) - \(record.attendee.company)")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                Text(record.registeredAt, style: .time)
-                                    .font(.caption)
-                                    .foregroundColor(.tertiary)
-                            }
-
-                            Spacer()
-
-                            // Status icons
-                            VStack(spacing: 4) {
-                                Image(systemName: record.envoySignInSuccess ? "checkmark.circle.fill" : "xmark.circle")
-                                    .foregroundColor(record.envoySignInSuccess ? .green : .gray)
-                                Text("Envoy")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            VStack(spacing: 4) {
-                                Image(systemName: record.badgePrinted ? "printer.fill" : "printer")
-                                    .foregroundColor(record.badgePrinted ? .green : .gray)
-                                Text("Badge")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                            }
+                        ForEach(records) { record in
+                            logRow(record)
+                                .padding(.horizontal, DS.Spacing.l)
                         }
-                        .padding(.vertical, 8)
                     }
-                    .listStyle(.plain)
+                    .padding(.bottom, DS.Spacing.l)
                 }
+                .background(DS.Color.background)
             }
-            .navigationTitle("Registration Log (\(records.count))")
         }
     }
 
-    private func initials(for name: String) -> String {
-        let parts = name.split(separator: " ")
-        let first = parts.first?.prefix(1) ?? ""
-        let last = parts.count > 1 ? parts.last!.prefix(1) : ""
-        return "\(first)\(last)".uppercased()
+    private var summaryBar: some View {
+        HStack(spacing: DS.Spacing.s) {
+            summaryStat(
+                count: records.count,
+                label: "Total",
+                tint: DS.Color.primary
+            )
+            summaryStat(
+                count: records.filter { $0.envoySignInSuccess }.count,
+                label: "Signed In",
+                tint: DS.Color.success
+            )
+            summaryStat(
+                count: records.filter { $0.badgePrinted }.count,
+                label: "Printed",
+                tint: DS.Color.accent
+            )
+        }
+    }
+
+    private func summaryStat(count: Int, label: String, tint: Color) -> some View {
+        VStack(spacing: DS.Spacing.xxs) {
+            Text("\(count)")
+                .font(.system(size: 28, weight: .bold))
+                .foregroundColor(tint)
+            Text(label.uppercased())
+                .font(.caption2.weight(.semibold))
+                .foregroundColor(DS.Color.textTertiary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, DS.Spacing.m)
+        .background(
+            RoundedRectangle(cornerRadius: DS.Radius.m, style: .continuous)
+                .fill(tint.opacity(0.08))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: DS.Radius.m, style: .continuous)
+                .stroke(tint.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    private func logRow(_ record: RegistrationRecord) -> some View {
+        HStack(spacing: DS.Spacing.m) {
+            InitialsAvatar(name: record.attendee.name, size: 52)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(record.attendee.name)
+                    .font(.headline)
+                    .foregroundColor(DS.Color.textPrimary)
+                Text("\(record.attendee.title) - \(record.attendee.company)")
+                    .font(.subheadline)
+                    .foregroundColor(DS.Color.textSecondary)
+                    .lineLimit(1)
+                Text(record.registeredAt.formatted(date: .omitted, time: .shortened))
+                    .font(.caption)
+                    .foregroundColor(DS.Color.textTertiary)
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: DS.Spacing.xxs) {
+                statusChip(success: record.envoySignInSuccess, label: "Envoy")
+                statusChip(success: record.badgePrinted, label: "Badge")
+            }
+        }
+        .card(padding: DS.Spacing.m)
+    }
+
+    private func statusChip(success: Bool, label: String) -> some View {
+        HStack(spacing: DS.Spacing.xxs) {
+            Image(systemName: success ? "checkmark.circle.fill" : "circle")
+                .symbolRenderingMode(.hierarchical)
+                .foregroundColor(success ? DS.Color.success : DS.Color.textTertiary)
+                .font(.caption)
+            Text(label)
+                .font(.caption2.weight(.semibold))
+                .foregroundColor(success ? DS.Color.success : DS.Color.textTertiary)
+        }
+        .padding(.horizontal, DS.Spacing.xs)
+        .padding(.vertical, 4)
+        .background(
+            Capsule()
+                .fill(success ? DS.Color.success.opacity(0.12) : DS.Color.surface)
+        )
     }
 }
