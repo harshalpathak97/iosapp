@@ -23,6 +23,7 @@
 		A10000014 /* BadgePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000014; };
 		A10000015 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000015; };
 		A10000016 /* RegistrationLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000016; };
+		A10000017 /* LinkedInScraperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000017; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		A20000014 /* BadgePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgePreviewView.swift; sourceTree = "<group>"; };
 		A20000015 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A20000016 /* RegistrationLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationLogView.swift; sourceTree = "<group>"; };
+		A20000017 /* LinkedInScraperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedInScraperService.swift; sourceTree = "<group>"; };
 		A30000001 /* QRVisitorRegistration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QRVisitorRegistration.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A30000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -117,6 +119,7 @@
 			children = (
 				A20000009 /* EnvoyService.swift */,
 				A20000010 /* BadgePrintService.swift */,
+				A20000017 /* LinkedInScraperService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 				A10000014 /* BadgePreviewView.swift in Sources */,
 				A10000015 /* SettingsView.swift in Sources */,
 				A10000016 /* RegistrationLogView.swift in Sources */,
+				A10000017 /* LinkedInScraperService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

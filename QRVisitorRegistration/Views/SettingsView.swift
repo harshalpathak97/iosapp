@@ -2,9 +2,13 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var envoyService: EnvoyService
+    @ObservedObject var scraperService: LinkedInScraperService
+
     @State private var apiKey: String = ""
     @State private var locationID: String = ""
     @State private var printerURL: String = ""
+    @State private var scraperBackendURL: String = ""
+    @State private var scraperSharedSecret: String = ""
     @State private var showSaved: Bool = false
     @Environment(\.dismiss) private var dismiss
 
@@ -37,6 +41,33 @@ struct SettingsView: View {
 
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
+                        Text("Backend URL")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        TextField("e.g., https://your-server.com or http://192.168.1.42:3000", text: $scraperBackendURL)
+                            .textFieldStyle(.roundedBorder)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .keyboardType(.URL)
+                    }
+                    .padding(.vertical, 4)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Shared Secret")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        SecureField("Enter shared secret (API_SHARED_SECRET)", text: $scraperSharedSecret)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    .padding(.vertical, 4)
+                } header: {
+                    Text("LinkedIn Scraper Backend")
+                } footer: {
+                    Text("Optional. When a scanned LinkedIn URL is not in the local attendees database, the app will call this backend to scrape the profile. See backend/README.md.")
+                }
+
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text("Printer URL (optional)")
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -53,9 +84,20 @@ struct SettingsView: View {
 
                 Section {
                     HStack {
-                        Text("Envoy Status")
+                        Text("Envoy")
                         Spacer()
                         if envoyService.isConfigured {
+                            Label("Configured", systemImage: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        } else {
+                            Label("Not Configured", systemImage: "exclamationmark.triangle.fill")
+                                .foregroundColor(.orange)
+                        }
+                    }
+                    HStack {
+                        Text("LinkedIn Scraper")
+                        Spacer()
+                        if scraperService.isConfigured {
                             Label("Configured", systemImage: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                         } else {
@@ -101,12 +143,15 @@ struct SettingsView: View {
                 apiKey = UserDefaults.standard.string(forKey: "envoy_api_key") ?? ""
                 locationID = UserDefaults.standard.string(forKey: "envoy_location_id") ?? ""
                 printerURL = UserDefaults.standard.string(forKey: "printer_url") ?? ""
+                scraperBackendURL = UserDefaults.standard.string(forKey: "scraper_backend_url") ?? ""
+                scraperSharedSecret = UserDefaults.standard.string(forKey: "scraper_shared_secret") ?? ""
             }
         }
     }
 
     private func saveSettings() {
         envoyService.configure(apiKey: apiKey, locationID: locationID)
+        scraperService.configure(backendURL: scraperBackendURL, sharedSecret: scraperSharedSecret)
         UserDefaults.standard.set(printerURL, forKey: "printer_url")
 
         withAnimation {

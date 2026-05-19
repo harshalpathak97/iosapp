@@ -38,7 +38,10 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showSettings) {
-            SettingsView(envoyService: viewModel.envoyService)
+            SettingsView(
+                envoyService: viewModel.envoyService,
+                scraperService: viewModel.scraperService
+            )
         }
     }
 
@@ -129,7 +132,7 @@ struct ContentView: View {
                     get: { viewModel.scannedCode },
                     set: { newValue in
                         if let code = newValue {
-                            viewModel.processScannedCode(code)
+                            Task { await viewModel.processScannedCode(code) }
                         }
                     }
                 ),
@@ -192,6 +195,26 @@ struct ContentView: View {
                 isLoading: viewModel.isLoading,
                 isCompleted: isCompleted
             )
+
+        case .scrapingProfile(let url):
+            VStack(spacing: 20) {
+                ProgressView()
+                    .scaleEffect(1.5)
+                Text("Looking up LinkedIn profile...")
+                    .font(.title3)
+                    .foregroundColor(.secondary)
+                Text(url)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.08))
+                    .cornerRadius(8)
+                Text("This can take 10-30 seconds")
+                    .font(.caption)
+                    .foregroundColor(.tertiary)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
         case .notFound(let url):
             VStack(spacing: 20) {

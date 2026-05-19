@@ -16,11 +16,13 @@ class RegistrationViewModel: ObservableObject {
     let database = AttendeeDatabase()
     let envoyService = EnvoyService()
     let printService = BadgePrintService()
+    let scraperService = LinkedInScraperService()
 
     // MARK: - State Machine
     enum RegistrationState: Equatable {
         case scanning
         case attendeeFound(Attendee)
+        case scrapingProfile(String)
         case notFound(String)
         case registering
         case completed(Attendee)
@@ -30,6 +32,7 @@ class RegistrationViewModel: ObservableObject {
             switch (lhs, rhs) {
             case (.scanning, .scanning): return true
             case (.attendeeFound(let a), .attendeeFound(let b)): return a.id == b.id
+            case (.scrapingProfile(let a), .scrapingProfile(let b)): return a == b
             case (.notFound(let a), .notFound(let b)): return a == b
             case (.registering, .registering): return true
             case (.completed(let a), .completed(let b)): return a.id == b.id
@@ -41,26 +44,47 @@ class RegistrationViewModel: ObservableObject {
 
     init() {
         envoyService.loadSavedConfiguration()
+        scraperService.loadSavedConfiguration()
     }
 
     // MARK: - QR Code Processing
 
-    func processScannedCode(_ code: String) {
+    func processScannedCode(_ code: String) async {
         scannedCode = code
         isScanning = false
 
         let linkedInURL = extractLinkedInURL(from: code)
         statusMessage = "Looking up: \(linkedInURL)"
 
+        // 1) Local DB hit (fast path)
         if let attendee = database.findAttendee(byLinkedInURL: linkedInURL) {
             matchedAttendee = attendee
             currentState = .attendeeFound(attendee)
-            statusMessage = "Found: \(attendee.name)"
-        } else {
-            matchedAttendee = nil
-            currentState = .notFound(linkedInURL)
-            statusMessage = "No attendee found for this LinkedIn profile"
+            statusMessage = "Found in local database: \(attendee.name)"
+            return
         }
+
+        // 2) Not in local DB -- try the scraper backend if configured
+        if scraperService.isConfigured {
+            currentState = .scrapingProfile(linkedInURL)
+            statusMessage = "Fetching profile from LinkedIn..."
+            do {
+                let scraped = try await scraperService.scrapeProfile(linkedinURL: linkedInURL)
+                matchedAttendee = scraped
+                currentState = .attendeeFound(scraped)
+                statusMessage = "Fetched from LinkedIn: \(scraped.name)"
+            } catch {
+                matchedAttendee = nil
+                currentState = .notFound(linkedInURL)
+                statusMessage = "Scrape failed: \(error.localizedDescription)"
+            }
+            return
+        }
+
+        // 3) No local match and no scraper -- existing behavior
+        matchedAttendee = nil
+        currentState = .notFound(linkedInURL)
+        statusMessage = "No attendee found for this LinkedIn profile"
     }
 
     /// Extract the LinkedIn profile URL from a scanned QR code value.
